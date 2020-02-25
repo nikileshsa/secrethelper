@@ -13,7 +13,7 @@ phases:
       - pwd
       - find .
       # Install CI dependencies
-      - go get 
+      - go get -t ./...
       - go get -u golang.org/x/lint/golint
 
   pre_build:
