@@ -55,9 +55,9 @@ func (m *mockSSMClient) PutParameterRequest(input *ssm.PutParameterInput) (*requ
 
 // TestCreateSSMParameter ...
 func TestCreateSSMParameter(t *testing.T) {
-	sg := newSecret(&mockEC2Client{}, &mockSSMClient{})
 
 	t.Run("Test createSSMParameter->Successful", func(t *testing.T) {
+		sg := newSecret(&mockEC2Client{}, &mockSSMClient{})
 		err := sg.createSSMParameter("KeyName", "some secret", "secret description", false)
 		if err != nil {
 			t.Error("Error : " + err.Error())
@@ -65,6 +65,7 @@ func TestCreateSSMParameter(t *testing.T) {
 		}
 	})
 	t.Run("Test createSSMParameter->With validation error", func(t *testing.T) {
+		sg := newSecret(&mockEC2Client{}, &mockSSMClient{})
 		sg.validationError = errors.New("Some Problem")
 		err := sg.createSSMParameter("KeyName", "some secret", "secret description", false)
 		if err == nil {
@@ -76,6 +77,7 @@ func TestCreateSSMParameter(t *testing.T) {
 	})
 
 	t.Run("Test createSSMParameter->Failed To Create Parameter", func(t *testing.T) {
+		sg := newSecret(&mockEC2Client{}, &mockSSMClient{})
 		err := sg.createSSMParameter(failToCreateParam, "some secret", "secret description", false)
 		if err == nil {
 			t.Error("Error expected")
