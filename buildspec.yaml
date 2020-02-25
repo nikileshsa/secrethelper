@@ -10,13 +10,13 @@ phases:
       # Debugging
       - env | sort
       # Work inside GOPATH
-      - ln -s ${CODEBUILD_SRC_DIR} ${SRC_DIR}
-      - cd ${SRC_DIR}
+      #- ln -s ${CODEBUILD_SRC_DIR} ${SRC_DIR}
+      #- cd ${SRC_DIR}
       # Debugging
       - pwd
       - find .
       # Install CI dependencies
-      - go get -t ./...
+      - go get 
       - go get -u golang.org/x/lint/golint
 
   pre_build:
@@ -24,12 +24,12 @@ phases:
       # Runs megacheck
       - golint -set_exit_status
       # Run all tests included with the application
-      - go test ./...
+      - go test 
 
   build:
     commands:
       # Build the go application
-      - go build -o main main.go
+      - go build -o main 
 
 artifacts:
   files:
