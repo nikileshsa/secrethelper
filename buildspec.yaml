@@ -1,0 +1,31 @@
+version: 0.2
+env:
+  variables:
+    SRC_DIR: /go/src/handler
+    ENV_NAME: pj
+
+phases:
+  install:
+    commands:
+      # Debugging
+      - env | sort
+      # Install CI dependencies
+      - go get .
+      - go get -u golang.org/x/lint/golint
+
+  pre_build:
+    commands:
+      # Runs megacheck
+      - golint -set_exit_status
+      # Run all tests included with the application
+      - go test .
+
+  build:
+    commands:
+      # Build the go application
+      - go build -o main main.go
+
+artifacts:
+  files:
+    - main
+  name: $ENV_NAME-lambda-$(date +%Y-%m-%d).zip 
