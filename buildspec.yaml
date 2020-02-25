@@ -1,32 +1,45 @@
 version: 0.2
 env:
   variables:
-    SRC_DIR: /go/src/handler
+    PACKAGE: "github.com/paujim/secrethelper"
     ENV_NAME: pj
 
 phases:
   install:
     commands:
-      # Debugging
-      - env | sort
-      # Debugging
-      - pwd
-      - find .
-      # Install CI dependencies
-      - go get -t ./...
-      - go get -u golang.org/x/lint/golint
+      # AWS Codebuild Go images use /go for the $GOPATH so let's copy our 
+      # application source code into that directory structure.
+      - mkdir -p "/go/src/$(dirname ${PACKAGE})"
+      - ln -s "${CODEBUILD_SRC_DIR}" "/go/src/${PACKAGE}" 
+      
+      # Print all environment variables (handy for AWS CodeBuild logs)
+      - env
+
+      # Install golint
+      - go get -u github.com/golang/lint/golint
 
   pre_build:
     commands:
-      # Runs megacheck
+      # Make sure we're in the project directory within our GOPATH
+      - cd "/go/src/${PACKAGE}"
+
+      # Fetch all dependencies
+      - go get -t ./...
+
+      # Ensure code passes all lint tests
       - golint -set_exit_status
-      # Run all tests included with the application
-      - go test 
+
+      # Check the Go code for common problems with 'go vet'
+      - go vet .
+
+      # Run all tests included with our application
+      - go test .
 
   build:
     commands:
       # Build the go application
       - go build -o main 
+
 
 artifacts:
   files:
